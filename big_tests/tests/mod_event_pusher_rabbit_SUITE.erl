@@ -414,20 +414,20 @@ group_chat_message_received_event_properly_formatted(Config) ->
               BobRoomJID = user_room_jid(RoomAddr, Bob),
               AliceJID = client_lower_short_jid(Alice),
               AliceFullJID = client_lower_full_jid(Alice),
-              AliceGroupChatMsgRecvRK = group_chat_msg_recv_rk(AliceJID),
-              Message = <<"Hi there!">>,
-              listen_to_group_chat_msg_recv_events_from_rabbit([AliceJID],
-                                                               Config),
               %% WHEN users chat
               escalus:send(Alice, muc_helper:stanza_muc_enter_room(Room,
                                                                    nick(Alice))),
               escalus:send(Bob, muc_helper:stanza_muc_enter_room(Room,
                                                                  nick(Bob))),
+              AliceGroupChatMsgRecvRK = group_chat_msg_recv_rk(AliceJID),
+              Message = <<"Hi there!">>,
+              listen_to_group_chat_msg_recv_events_from_rabbit([AliceJID],
+                                                               Config),
 
               escalus:send(Bob, escalus_stanza:groupchat_to(RoomAddr, Message)),
               %% THEN
               %% TODO: Investigate why there is an empty message sent.
-              get_decoded_message_from_rabbit(AliceGroupChatMsgRecvRK),
+              % get_decoded_message_from_rabbit(AliceGroupChatMsgRecvRK),
               ?assertMatch(#{<<"from_user_id">> := BobRoomJID,
                              <<"to_user_id">> := AliceFullJID,
                              <<"message">> := Message},
